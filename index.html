@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小徑｜8 週 Python 基礎學習路徑</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EEF2EF;
+    --paper: #FAFBFA;
+    --ink: #1B2A24;
+    --muted: #55655D;
+    --line: #D3DBD6;
+    --pine: #24493E;
+    --done: #3E7A4B;
+    --doing: #D99A2B;
+    --late: #B5344A;
+    --todo: #C7D0CA;
+    --sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    --serif: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+  h1, h2 { font-family: var(--serif); margin: 0; line-height: 1.3; }
+  a { color: var(--pine); text-underline-offset: 3px; }
+  a:focus-visible, input:focus-visible, button:focus-visible {
+    outline: 3px solid var(--doing);
+    outline-offset: 2px;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero { padding: 28px 0 8px; }
+  .brand { font-family: var(--serif); font-weight: 800; font-size: 18px; color: var(--pine); letter-spacing: .08em; }
+  h1 { font-size: clamp(30px, 6vw, 48px); font-weight: 800; margin-top: 10px; color: var(--pine); }
+  .goal { margin: 10px 0 0; max-width: 40em; color: var(--muted); }
+
+  .trail { margin-top: 18px; }
+  .trail svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .trail .road { fill: none; stroke: var(--line); stroke-width: 6; stroke-linecap: round; }
+  .trail .road-dash { fill: none; stroke: #fff; stroke-width: 1.5; stroke-dasharray: 2 9; stroke-linecap: round; }
+  .trail .dot { stroke: var(--paper); stroke-width: 3; }
+  .dot.done { fill: var(--done); }
+  .dot.doing { fill: var(--doing); }
+  .dot.late { fill: var(--late); }
+  .dot.todo { fill: var(--todo); }
+  .trail .pin { fill: var(--ink); stroke: var(--ink); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 6px 0 0; padding: 0; list-style: none; font-size: 14px; color: var(--muted); }
+  .legend i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+  .legend i.done { background: var(--done); }
+  .legend i.doing { background: var(--doing); }
+  .legend i.late { background: var(--late); }
+  .legend i.todo { background: var(--todo); }
+  .legend i.pin { background: var(--ink); border-radius: 2px; width: 3px; height: 13px; margin-right: 8px; vertical-align: -2px; }
+
+  .controls {
+    display: grid; gap: 14px 28px; grid-template-columns: 1fr;
+    margin-top: 22px; padding: 16px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  }
+  .controls label { display: block; font-weight: 500; font-size: 15px; }
+  .controls input[type="date"] {
+    font: inherit; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink);
+  }
+  .controls input[type="range"] { width: 100%; accent-color: var(--pine); }
+  .controls .sim-row { display: flex; gap: 12px; align-items: center; }
+  .controls button {
+    font: inherit; font-size: 14px; padding: 6px 14px; border-radius: 6px; cursor: pointer;
+    border: 1px solid var(--pine); background: transparent; color: var(--pine); white-space: nowrap;
+  }
+  .controls button:hover { background: var(--pine); color: #fff; }
+  .hint { font-size: 14px; color: var(--muted); margin: 4px 0 0; }
+  @media (min-width: 760px) { .controls { grid-template-columns: 220px 1fr; align-items: start; } }
+
+  /* ---------- Layout ---------- */
+  .layout { display: grid; gap: 28px; grid-template-columns: 1fr; margin-top: 28px; }
+  .layout aside { order: -1; }
+  @media (min-width: 900px) {
+    .layout { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); align-items: start; }
+    .layout aside { order: 0; position: sticky; top: 16px; }
+  }
+  h2 { font-size: 22px; font-weight: 600; margin-bottom: 14px; }
+
+  /* ---------- Unit list ---------- */
+  ol.units { list-style: none; margin: 0; padding: 0; background: var(--paper); border-radius: 10px; border: 1px solid var(--line); }
+  .unit { padding: 16px 18px; border-bottom: 1px solid var(--line); border-left: 6px solid var(--todo); }
+  .unit:last-child { border-bottom: 0; }
+  .unit.done { border-left-color: var(--done); }
+  .unit.doing { border-left-color: var(--doing); }
+  .unit.late { border-left-color: var(--late); }
+  .check { display: flex; gap: 12px; align-items: flex-start; cursor: pointer; }
+  .check input { width: 22px; height: 22px; margin: 3px 0 0; flex: none; accent-color: var(--done); cursor: pointer; }
+  .uname { font-weight: 700; font-size: 17px; line-height: 1.5; }
+  .unit.done .uname { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 1px; }
+  .umeta { margin: 4px 0 0 34px; font-size: 14px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 2px 14px; align-items: center; }
+  .badge { display: none; font-size: 13px; font-weight: 700; padding: 0 8px; border-radius: 4px; line-height: 1.7; }
+  .unit.late .badge { display: inline-block; background: var(--late); color: #fff; }
+  .unit.doing .badge { display: inline-block; background: var(--doing); color: var(--ink); }
+  .unit.done .badge { display: inline-block; background: var(--done); color: #fff; }
+  .unote { margin: 6px 0 0 34px; font-size: 15px; }
+  .ures { margin: 6px 0 0 34px; font-size: 15px; }
+  .ures a { display: inline-block; margin-right: 14px; }
+
+  /* ---------- Progress ---------- */
+  .panel { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 20px; }
+  .pct { font-family: var(--serif); font-weight: 800; font-size: 44px; line-height: 1; color: var(--pine); }
+  .pct small { font-size: 20px; font-weight: 600; margin-left: 2px; }
+  .bar { position: relative; height: 16px; margin: 14px 0 6px; background: var(--todo); border-radius: 8px; overflow: visible; }
+  .fill { height: 100%; width: 0; background: var(--done); border-radius: 8px; transition: width .35s ease; }
+  .tick { position: absolute; top: -5px; bottom: -5px; width: 3px; margin-left: -1px; background: var(--ink); border-radius: 2px; transition: left .35s ease; }
+  .bar-note { font-size: 14px; color: var(--muted); margin: 0; }
+  .counts { margin: 14px 0 0; font-size: 15px; }
+
+  .status { margin-top: 18px; padding: 14px 16px; border-radius: 8px; border-left: 6px solid var(--done); background: #E6EFE8; }
+  .status.warn { border-left-color: var(--doing); background: #F7EBD2; }
+  .status.late { border-left-color: var(--late); background: #F4DEE1; }
+  .status.done { border-left-color: var(--pine); background: #DCE8E2; }
+  .status strong { display: block; font-size: 18px; margin-bottom: 4px; }
+  .status p { margin: 6px 0 0; font-size: 15px; }
+
+  /* ---------- Gantt ---------- */
+  .gantt-sec { margin: 40px 0 56px; }
+  .gantt-scroll { overflow-x: auto; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; }
+  .gantt { min-width: 880px; position: relative; padding: 6px 0 30px; }
+  .g-row { display: grid; grid-template-columns: 190px 1fr; align-items: center; min-height: 46px; }
+  .g-label { padding: 0 12px; font-size: 14px; line-height: 1.35; position: sticky; left: 0; background: var(--paper); z-index: 2; }
+  .g-track {
+    position: relative; height: 46px; margin-right: 12px;
+    background-image: repeating-linear-gradient(to right, transparent 0, transparent calc(12.5% - 1px), var(--line) calc(12.5% - 1px), var(--line) 12.5%);
+  }
+  .g-head .g-track { height: 30px; background-image: none; display: grid; grid-template-columns: repeat(8, 1fr); }
+  .g-head .wk { font-size: 13px; color: var(--muted); padding-left: 6px; line-height: 30px; }
+  .g-bar {
+    position: absolute; top: 11px; height: 24px; border-radius: 6px; padding: 0 5px;
+    font-size: 11px; line-height: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    background: var(--todo); color: var(--ink); transition: background .25s ease;
+  }
+  .g-bar.done { background: var(--done); color: #fff; }
+  .g-bar.doing { background: var(--doing); color: var(--ink); }
+  .g-bar.late { background: var(--late); color: #fff; }
+  .g-today { position: absolute; top: 0; bottom: 0; width: 0; border-left: 2px dashed var(--ink); z-index: 3; pointer-events: none; transition: left .35s ease; }
+  .g-today span { position: absolute; bottom: 2px; left: 4px; font-size: 12px; background: var(--ink); color: #fff; padding: 0 6px; border-radius: 3px; white-space: nowrap; }
+
+  footer { padding: 0 0 36px; font-size: 14px; color: var(--muted); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fill, .tick, .g-today, .g-bar { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="brand">小徑</div>
+    <h1>8 週學會 Python 基礎</h1>
+    <p class="goal">目標：能寫出簡單的小程式。每週約 6 小時，共 48 小時，教材全部是免費公開資源。勾選完成的單元，路徑會跟著更新。</p>
+
+    <div class="trail">
+      <svg id="trailSvg" viewBox="0 0 800 130" role="img" aria-label="學習路徑示意圖：八個單元沿著一條小路排列，顏色表示完成狀態">
+        <path id="trailPath" class="road" d="M16,92 C90,14 170,122 262,66 S 430,6 508,62 S 668,118 784,38"/>
+        <path class="road-dash" d="M16,92 C90,14 170,122 262,66 S 430,6 508,62 S 668,118 784,38"/>
+        <g id="trailDots"></g>
+      </svg>
+      <ul class="legend" aria-label="圖例">
+        <li><i class="done"></i>已完成</li>
+        <li><i class="doing"></i>進行中</li>
+        <li><i class="late"></i>落後</li>
+        <li><i class="todo"></i>未開始</li>
+        <li><i class="pin"></i>今天的位置</li>
+      </ul>
+    </div>
+
+    <div class="controls">
+      <div>
+        <label for="startDate">開始日期</label>
+        <input type="date" id="startDate">
+      </div>
+      <div>
+        <label for="simSlider" id="simLabel">模擬今天</label>
+        <div class="sim-row">
+          <input type="range" id="simSlider" min="0" max="62" step="1" value="0">
+          <button type="button" id="resetBtn">回到真實今天</button>
+        </div>
+        <p class="hint">拖動滑桿可以快轉時間，觀察沒完成的單元如何變成「落後」，以及系統給的調整建議。</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <main class="layout">
+    <section aria-labelledby="h-units">
+      <h2 id="h-units">課程清單</h2>
+      <ol class="units" id="units"></ol>
+    </section>
+
+    <aside aria-labelledby="h-progress">
+      <h2 id="h-progress">我的進度</h2>
+      <div class="panel">
+        <div class="pct"><span id="pctNum">0</span><small>%</small></div>
+        <div class="bar" id="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="整體完成進度">
+          <div class="fill" id="fill"></div>
+          <div class="tick" id="tick" title="依時程此刻應有的進度"></div>
+        </div>
+        <p class="bar-note">綠色是實際進度，黑色細線是依時程此刻應有的進度（<span id="expPct">0</span>%）。</p>
+        <p class="counts" id="counts"></p>
+        <div class="status" id="status" aria-live="polite">
+          <strong id="statusHead"></strong>
+          <p id="statusAdvice"></p>
+          <p id="statusLoad"></p>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <section class="gantt-sec" aria-labelledby="h-gantt">
+    <h2 id="h-gantt">時程甘特圖</h2>
+    <div class="gantt-scroll">
+      <div class="gantt" id="gantt"></div>
+    </div>
+  </section>
+
+  <footer>
+    這是「小徑」的展示版，只模擬一個固定主題，用來示範「目標、課程、時程、進度追蹤」的完整流程。完整版會由 AI 依使用者的目標與程度，從各平台的公開資源中規劃個人路徑。
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- 資料 ---------- */
+  var DOCS = "https://docs.python.org/zh-tw/3/tutorial/";
+  var UNITS = [
+    { name: "環境安裝與第一支程式", hours: 4, days: 5,
+      note: "安裝 Python，用 print、變數與運算做幾個簡單計算。",
+      links: [ ["Python 官方下載頁", "https://www.python.org/downloads/"],
+               ["官方教學：Python 的非正式簡介", DOCS + "introduction.html"] ] },
+    { name: "流程控制：if、for、while", hours: 6, days: 7,
+      note: "學會條件判斷與迴圈，練習寫一個 FizzBuzz。",
+      links: [ ["官方教學：更多控制流程工具", DOCS + "controlflow.html"] ] },
+    { name: "資料結構：list、dict", hours: 6, days: 7,
+      note: "練習清單與字典的新增、查詢、迴圈走訪。",
+      links: [ ["官方教學：資料結構", DOCS + "datastructures.html"] ] },
+    { name: "函式", hours: 6, days: 7,
+      note: "把重複的程式碼包成函式，練習參數與回傳值。",
+      links: [ ["官方教學：定義函式", DOCS + "controlflow.html#defining-functions"] ] },
+    { name: "模組與套件", hours: 5, days: 6,
+      note: "學會 import，試著用標準函式庫的 random 與 datetime。",
+      links: [ ["官方教學：模組", DOCS + "modules.html"] ] },
+    { name: "檔案讀寫與例外處理", hours: 6, days: 7,
+      note: "讀寫文字檔，並用 try/except 處理使用者輸入錯誤。",
+      links: [ ["官方教學：輸入與輸出", DOCS + "inputoutput.html"],
+               ["官方教學：錯誤與例外", DOCS + "errors.html"] ] },
+    { name: "類別與物件", hours: 7, days: 8,
+      note: "理解類別、屬性與方法，把一個小角色寫成類別。",
+      links: [ ["官方教學：類別", DOCS + "classes.html"] ] },
+    { name: "期末小專案", hours: 8, days: 9,
+      note: "整合前七個單元，完成一個猜數字遊戲或待辦清單小程式。",
+      links: [ ["官方教學：標準函式庫導覽", DOCS + "stdlib.html"] ] }
+  ];
+
+  var TOTAL_DAYS = 0, TOTAL_HOURS = 0;
+  UNITS.forEach(function (u, i) {
+    u.id = i;
+    u.start = TOTAL_DAYS;  TOTAL_DAYS += u.days;  u.end = TOTAL_DAYS;
+    TOTAL_HOURS += u.hours; u.hEnd = TOTAL_HOURS;
+  });
+  var PLANNED_PER_DAY = TOTAL_HOURS / TOTAL_DAYS;
+
+  /* ---------- 狀態 ---------- */
+  var checked = {};   // id -> true
+  var simDay = 0;     // 模擬「今天」距離開始日期的天數
+
+  /* ---------- 小工具 ---------- */
+  function $(id) { return document.getElementById(id); }
+  function pad(n) { return n < 10 ? "0" + n : "" + n; }
+  function toInputValue(dt) { return dt.getFullYear() + "-" + pad(dt.getMonth() + 1) + "-" + pad(dt.getDate()); }
+  function parseDate(s) { var p = s.split("-").map(Number); return new Date(p[0], p[1] - 1, p[2]); }
+  function addDays(dt, n) { var x = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()); x.setDate(x.getDate() + n); return x; }
+  function fmt(dt) { return (dt.getMonth() + 1) + "/" + dt.getDate(); }
+  function diffDays(a, b) { return Math.round((a - b) / 86400000); }
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+  function startDate() {
+    var v = $("startDate").value;
+    return v ? parseDate(v) : parseDate(toInputValue(new Date()));
+  }
+  function statusOf(u, d) {
+    if (checked[u.id]) return "done";
+    if (d >= u.end) return "late";
+    if (d >= u.start) return "doing";
+    return "todo";
+  }
+  function lateDaysOf(u, d) { return d - u.end + 1; }
+
+  /* ---------- 建立畫面（只做一次） ---------- */
+  function buildList() {
+    var ol = $("units");
+    UNITS.forEach(function (u) {
+      var li = document.createElement("li");
+      li.className = "unit todo";
+      li.id = "unit-" + u.id;
+
+      var label = document.createElement("label");
+      label.className = "check";
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.addEventListener("change", function () {
+        checked[u.id] = cb.checked;
+        render();
+      });
+      var nm = document.createElement("span");
+      nm.className = "uname";
+      nm.textContent = "單元 " + (u.id + 1) + "　" + u.name;
+      label.appendChild(cb);
+      label.appendChild(nm);
+      li.appendChild(label);
+
+      var meta = document.createElement("div");
+      meta.className = "umeta";
+      meta.innerHTML = '<span class="dates"></span><span>預估 ' + u.hours + ' 小時</span><span class="badge"></span>';
+      li.appendChild(meta);
+
+      var note = document.createElement("p");
+      note.className = "unote";
+      note.textContent = u.note;
+      li.appendChild(note);
+
+      var res = document.createElement("p");
+      res.className = "ures";
+      u.links.forEach(function (l) {
+        var a = document.createElement("a");
+        a.href = l[1]; a.target = "_blank"; a.rel = "noopener noreferrer";
+        a.textContent = l[0];
+        res.appendChild(a);
+      });
+      li.appendChild(res);
+      ol.appendChild(li);
+    });
+  }
+
+  function buildGantt() {
+    var g = $("gantt");
+    var head = document.createElement("div");
+    head.className = "g-row g-head";
+    head.innerHTML = '<div class="g-label"></div><div class="g-track"></div>';
+    var track = head.querySelector(".g-track");
+    for (var w = 1; w <= 8; w++) {
+      var s = document.createElement("div");
+      s.className = "wk";
+      s.textContent = "第 " + w + " 週";
+      track.appendChild(s);
+    }
+    g.appendChild(head);
+
+    UNITS.forEach(function (u) {
+      var row = document.createElement("div");
+      row.className = "g-row";
+      var lab = document.createElement("div");
+      lab.className = "g-label";
+      lab.textContent = "單元 " + (u.id + 1) + "　" + u.name;
+      var tr = document.createElement("div");
+      tr.className = "g-track";
+      var bar = document.createElement("div");
+      bar.className = "g-bar";
+      bar.id = "gbar-" + u.id;
+      bar.style.left = (u.start / TOTAL_DAYS * 100) + "%";
+      bar.style.width = (u.days / TOTAL_DAYS * 100) + "%";
+      tr.appendChild(bar);
+      row.appendChild(lab);
+      row.appendChild(tr);
+      g.appendChild(row);
+    });
+
+    var today = document.createElement("div");
+    today.className = "g-today";
+    today.id = "gToday";
+    today.innerHTML = "<span>今天</span>";
+    g.appendChild(today);
+  }
+
+  /* ---------- 每次狀態改變時重畫 ---------- */
+  function drawTrail(statuses, d) {
+    var path = $("trailPath");
+    var group = $("trailDots");
+    var NS = "http://www.w3.org/2000/svg";
+    while (group.firstChild) group.removeChild(group.firstChild);
+    var L = path.getTotalLength();
+
+    UNITS.forEach(function (u) {
+      var p = path.getPointAtLength(L * (u.hEnd / TOTAL_HOURS));
+      var c = document.createElementNS(NS, "circle");
+      c.setAttribute("class", "dot " + statuses[u.id]);
+      c.setAttribute("cx", p.x); c.setAttribute("cy", p.y); c.setAttribute("r", 10);
+      var t = document.createElementNS(NS, "title");
+      t.textContent = "單元 " + (u.id + 1) + "：" + u.name;
+      c.appendChild(t);
+      group.appendChild(c);
+    });
+
+    var f = clamp(d / TOTAL_DAYS, 0, 1);
+    var q = path.getPointAtLength(L * f);
+    var line = document.createElementNS(NS, "line");
+    line.setAttribute("class", "pin");
+    line.setAttribute("x1", q.x); line.setAttribute("x2", q.x);
+    line.setAttribute("y1", q.y); line.setAttribute("y2", q.y - 30);
+    line.setAttribute("stroke-width", 3);
+    var tri = document.createElementNS(NS, "polygon");
+    tri.setAttribute("class", "pin");
+    tri.setAttribute("points", (q.x - 9) + "," + (q.y - 48) + " " + (q.x + 9) + "," + (q.y - 48) + " " + q.x + "," + (q.y - 30));
+    group.appendChild(line);
+    group.appendChild(tri);
+  }
+
+  function render() {
+    var start = startDate();
+    var d = simDay;
+    var statuses = UNITS.map(function (u) { return statusOf(u, d); });
+
+    /* 模擬日期標籤 */
+    $("simLabel").textContent = "模擬今天：第 " + (d + 1) + " 天（" + fmt(addDays(start, d)) + "）";
+    $("simSlider").value = d;
+
+    /* 清單 */
+    var doneHours = 0, doneCount = 0, remainingHours = 0;
+    var lateUnits = [], doingUnits = [];
+    UNITS.forEach(function (u) {
+      var st = statuses[u.id];
+      var li = $("unit-" + u.id);
+      li.className = "unit " + st;
+      li.querySelector("input").checked = !!checked[u.id];
+      li.querySelector(".dates").textContent = fmt(addDays(start, u.start)) + " – " + fmt(addDays(start, u.end - 1));
+      var badge = li.querySelector(".badge");
+      if (st === "done") badge.textContent = "已完成";
+      else if (st === "late") badge.textContent = "落後 " + lateDaysOf(u, d) + " 天";
+      else if (st === "doing") badge.textContent = "進行中";
+      else badge.textContent = "";
+
+      if (st === "done") { doneHours += u.hours; doneCount++; }
+      else remainingHours += u.hours;
+      if (st === "late") lateUnits.push(u);
+      if (st === "doing") doingUnits.push(u);
+
+      /* 甘特圖 */
+      var gb = $("gbar-" + u.id);
+      gb.className = "g-bar " + st;
+      gb.textContent = st === "done" ? "✓ 完成" : st === "late" ? "落後" + lateDaysOf(u, d) + "天" : st === "doing" ? "進行中" : u.hours + "h";
+      gb.title = "單元 " + (u.id + 1) + "：" + u.name + "（" + fmt(addDays(start, u.start)) + " – " + fmt(addDays(start, u.end - 1)) + "）";
+    });
+
+    $("gToday").style.left = "calc(190px + (100% - 190px - 12px) * " + (clamp(d, 0, TOTAL_DAYS) / TOTAL_DAYS) + ")";
+
+    /* 進度條 */
+    var pct = Math.round(doneHours / TOTAL_HOURS * 100);
+    var expHours = 0;
+    UNITS.forEach(function (u) { expHours += u.hours * clamp((d - u.start) / u.days, 0, 1); });
+    var expPct = Math.round(expHours / TOTAL_HOURS * 100);
+    $("pctNum").textContent = pct;
+    $("fill").style.width = pct + "%";
+    $("tick").style.left = expPct + "%";
+    $("expPct").textContent = expPct;
+    $("bar").setAttribute("aria-valuenow", pct);
+    $("counts").textContent = "已完成 " + doneCount + " / " + UNITS.length + " 個單元，" + doneHours + " / " + TOTAL_HOURS + " 小時。";
+
+    /* 落後偵測與建議 */
+    var box = $("status");
+    var head, advice, load = "";
+    var remDays = Math.max(TOTAL_DAYS - d, 0);
+    var perDay = PLANNED_PER_DAY.toFixed(1);
+
+    if (doneCount === UNITS.length) {
+      box.className = "status done";
+      head = "全部完成，8 週的路徑走完了";
+      advice = "可以回頭複習比較不熟的單元，或開始規劃下一個主題。";
+    } else {
+      if (remDays > 0) {
+        load = "剩下 " + remainingHours + " 小時，距離原訂結束還有 " + remDays + " 天，平均每天約 " + (remainingHours / remDays).toFixed(1) + " 小時（原計畫約 " + perDay + " 小時）。";
+      } else {
+        load = "原訂的 8 週已經結束，還有 " + remainingHours + " 小時的內容沒完成。";
+      }
+
+      if (lateUnits.length === 0) {
+        box.className = "status";
+        head = "進度正常";
+        if (doingUnits.length) {
+          advice = "目前進行：單元 " + doingUnits.map(function (u) { return (u.id + 1) + "「" + u.name + "」"; }).join("、") + "。照這個節奏繼續就可以。";
+        } else {
+          var next = UNITS.filter(function (u) { return !checked[u.id]; })[0];
+          advice = "你已經超前進度，下一個是單元 " + (next.id + 1) + "「" + next.name + "」，可以提早開始。";
+        }
+      } else {
+        var maxLate = 0;
+        lateUnits.forEach(function (u) { maxLate = Math.max(maxLate, lateDaysOf(u, d)); });
+        var names = lateUnits.map(function (u) { return "單元 " + (u.id + 1); }).join("、");
+        head = "目前落後 " + maxLate + " 天（" + names + " 尚未完成）";
+        var first = lateUnits[0];
+        if (maxLate <= 2) {
+          box.className = "status warn";
+          advice = "落後不多。今天挑 30 到 60 分鐘先補完「" + first.name + "」，後面的單元不用調整。";
+        } else if (maxLate <= 6) {
+          box.className = "status late";
+          advice = "已經落後 " + maxLate + " 天。建議先補完「" + first.name + "」，並把後面單元的練習題減半，把時間追回來。";
+        } else {
+          box.className = "status late";
+          advice = "落後超過一週。建議把整份計畫的結束日延後一週，並縮小期末小專案的範圍，例如只做猜數字遊戲的基本版。";
+        }
+      }
+    }
+    $("statusHead").textContent = head;
+    $("statusAdvice").textContent = advice;
+    $("statusLoad").textContent = load;
+
+    drawTrail(statuses, d);
+  }
+
+  /* ---------- 事件 ---------- */
+  function init() {
+    $("startDate").value = toInputValue(new Date());
+    buildList();
+    buildGantt();
+
+    $("startDate").addEventListener("change", function () {
+      if (!$("startDate").value) $("startDate").value = toInputValue(new Date());
+      render();
+    });
+    $("simSlider").addEventListener("input", function (e) {
+      simDay = parseInt(e.target.value, 10) || 0;
+      render();
+    });
+    $("resetBtn").addEventListener("click", function () {
+      var today = parseDate(toInputValue(new Date()));
+      simDay = clamp(diffDays(today, startDate()), 0, 62);
+      render();
+    });
+    render();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
